@@ -553,6 +553,26 @@ cat tmpfile Makefile.interm > Makefile
 rm -f Makefile.interm tmpfile
 
 # Add extra packages
+
+if [ "$process" = "W_ew-BMNNP" ]; then
+    ## copy a functioning version of PHOTOS here and configure+compile it!
+    wget --no-verbose --no-check-certificate http://photospp.web.cern.ch/photospp/resources/PHOTOS.3.61/PHOTOS.3.61.tar.gz || fail_exit "Failed to get PHOTOS 3.61 tarball"
+    echo "WARNING:  UNTARRING PHOTOS!! THIS WILL REPLACE THE PHOTOS THAT IS ALREADY IN PLACE!!!"
+    tar xf PHOTOS.3.61.tar.gz
+    cd PHOTOS/
+    echo "Configuring PHOTOS 3.61"
+    ./configure --with-hepmc=/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/hepmc/2.06.07-oenich
+    echo "Making PHOTOS 3.61"
+    make
+    cd -
+    ## put the correct library names for PHOTOS 3.61 into the Makefile
+    echo "Linking PHOTOS 3.61 libraries in the Makefile"
+    sed -i "s#-lPhotosCxxInterface -lPhotosFortran -lstdc++ -ldl#-lPhotospp -lPhotosppHEPEVT -lstdc++ -ldl#g" Makefile
+    ## should be done now?? make the main-PHOTOS-lhef
+    echo "Making main-PHOTOS-lhef"
+    make main-PHOTOS-lhef
+fi
+
 if [ $jhugen = 1 ]; then
   if [ ! -f JHUGenerator.${jhugenversion}.tar.gz ]; then
     wget --no-verbose --no-check-certificate http://spin.pha.jhu.edu/Generator/JHUGenerator.${jhugenversion}.tar.gz || fail_exit "Failed to get JHUGen tar ball "
@@ -645,6 +665,10 @@ make pwhg_main || fail_exit "Failed to compile pwhg_main"
 
 mkdir -p ${WORKDIR}/${name}
 cp -p pwhg_main ${WORKDIR}/${name}/.
+if [ "$process" = "W_ew-BMNNP" ]; then
+    echo "copying main-PHOTOS-lhef in the same place as pwhg_main. in the hopes it will go in the tarball"
+    cp -p main-PHOTOS-lhef ${WORKDIR}/${name}/.
+fi
 
 if [ -d ./lib ]; then
   cp -a ./lib ${WORKDIR}/${name}/.

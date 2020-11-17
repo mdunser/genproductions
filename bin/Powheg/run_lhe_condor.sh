@@ -40,7 +40,8 @@ echo -e "echo \"Start of job on \" `date`" >> submitEvents.sh
 echo -e "source /cvmfs/cms.cern.ch/cmsset_default.sh" >> submitEvents.sh
 echo -e "tar -xzvf ${WORKDIR}/${tar}" >> submitEvents.sh
 echo -e "./runcmsgrid.sh ${nume} \$1 1" >> submitEvents.sh
-echo -e "mv cmsgrid_final.lhe ${WORKDIR}/cmsgrid_final_\$1.lhe" >> submitEvents.sh
+echo -e "#mv cmsgrid_final.lhe ${WORKDIR}/cmsgrid_final_\$1.lhe" >> submitEvents.sh
+echo -e "mv pwgevents_photos.lhe ${WORKDIR}/pwgevents_photos_\$1.lhe" >> submitEvents.sh
 echo -e "mv powhegbox*/log* ${WORKDIR}" >> submitEvents.sh
 chmod a+x submitEvents.sh 
 

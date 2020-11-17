@@ -172,10 +172,14 @@ if [ "$produceWeights" == "true" ]; then
    echo "select_EW_virt 1" >> powheg.input
 
    ../pwhg_main &> logrew_${process}_${seed}.txt; test $? -eq 0 || fail_exit "pwhg_main error: exit code not 0"   
+   echo "running PHOTOS in produce weights!"
+   ../main-PHOTOS-lhef
 
    cat pwgevents-rwgt.lhe | grep -v "Random number generator exit values" > ${file}_final.lhe
 else 
    cat pwgevents.lhe | grep -v "Random number generator exit values" > ${file}_final.lhe
+   echo "running PHOTOS!!!"
+   ../main-PHOTOS-lhef
 fi
 
 rm -rf powheg.input*
@@ -220,6 +224,8 @@ fi
 sed "s@-1000021@ 1000022@g" cmsgrid_final.lhe           > cmsgrid_final.lhe_F1
 sed "s@1000021@1000022@g"   cmsgrid_final.lhe_F1          > cmsgrid_final.lhe
 cp ${file}_final.lhe ${WORKDIR}/.
+echo "copying the file with photos shower into $WORKDIR " 
+cp pwgevents_photos.lhe ${WORKDIR}/.
 
 echo "Output ready with ${file}_final.lhe at $WORKDIR"
 echo "End of job on " `date`
